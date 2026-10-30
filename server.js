@@ -1,0 +1,44 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import connectDB from "./dbConfig.js";
+import auth from './routes/auth.js'
+import donation from "./routes/donation.js";
+import Receiver from "./routes/receiver.js";
+import home from './routes/home.js';
+dotenv.config();
+
+const app = express()
+const PORT = process.env.PORT || 5000;
+
+connectDB()
+
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
+
+
+
+app.use("/api/auth", auth);
+app.use("/api/donation", donation);
+app.use("/api/receiver", Receiver);
+app.use("/api", home);
+
+app.get("/", (req, res) => {
+  res.send("Working ✅");
+});
+app.get("/", (req, res) => {
+  console.log("Route hit");
+  res.send("Working ✅");
+});
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+})
